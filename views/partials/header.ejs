@@ -1,15 +1,24 @@
 <html>
 	<head>
-		<title>Food App</title>
+		<title>CookNChill</title>
 		<link  rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.1.4/semantic.min.css">
         <link  rel="stylesheet" type="text/css" href="/stylesheets/app.css">
+        <link rel="stylesheet" type="text" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 	</head>
 	<body>
 		<div class ="ui fixed inverted menu">
 			<div class="ui container">
-				<div class="header item"><i class="food icon"></i>Food World</div>
-				<a href="/" class="item">Home</a>
+				<div class="header item"><i class="food icon"></i>CookNChill</div>
+				<a href="/meals" class="item">Profile</a>
 			    <a href="/meals/new" class="item">New Meal</a>
+			    <div class="right menu">
+			    	<% if(!currentUser){ %>
+				    	<a href="/signup" class="item">Sign up</a>
+				        <a href="/login" class="item">Login</a>
+				    <% } else { %> 
+				    <a style="padding-top: 18px;" href="#">Signed In As <%=currentUser.username%></a>
+			           <a href="/Logout" class="item">Logout</a>
+		           <% } %>
+			    </div>
 			</div>
 		</div>
-	

@@ -2,9 +2,12 @@ var express          = require("express"),
     app              = express(),
     expressSanitizer = require("express-sanitizer"),
     methodOverride   = require("method-override"),
+    passport         = require("passport"),
+    LocalStrategy    = require("passport-local"),
+    User             = require("./models/user"),
     bodyParser       = require("body-parser"),
     mongoose         = require("mongoose"),
-    PORT             = process.env.PORT || 8080;
+    PORT             = process.env.PORT || 8081;
 
 
 // APP CONFIG
@@ -25,10 +28,28 @@ var mealSchema = new mongoose.Schema({
 
 var Meal = mongoose.model("Meal", mealSchema);
 
+// PASSPORT CONFIG
+app.use(require("express-session")({
+   secret:" Nala is the Best",
+   resave: false,
+   saveUninitialized: false
+}));
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use(function(req, res, next){
+   res.locals.currentUser = req.user;
+   next();
+});
+
 
 app.get("/", function(req, res){
-  res.redirect("/meals");
-});
+  res.render("landing")
+})
+
 
 // INDEX ROUTE
 app.get("/meals", function(req, res){
@@ -37,7 +58,7 @@ app.get("/meals", function(req, res){
     if(err){
       console.log("ERROR");
     } else{
-      res.render("index", {meals: meals});
+      res.render("index", {meals:meals, currentUser: req.user});
     }
   }); 
 });
@@ -108,6 +129,53 @@ app.delete("/meals/:id", function(req, res){
    }); 
 });
 
+// ================
+// AUTH ROUTES
+// ================
+
+// SHOW REGISTER FORM
+app.get("/register", function(req, res){
+    res.render("signup");
+});
+// Handle Sign Up Logic
+app.post("/register", function(req, res){
+    // res.send("Signing you up!!");
+    var newUser = new User({username: req.body.username});
+    User.register(newUser, req.body.password,function(err, user){
+        if(err){
+            console.log(err);
+            return res.render("signup");
+        }
+        passport.authenticate("local")(req, res, function(){
+            res.redirect("/meals");
+        });
+    });
+});
+
+// SHOW LOGIN FORM
+app.get("/login", function(req, res){
+    res.render("login");
+});
+// handling login logic
+app.post("/login", passport.authenticate("local",
+     {
+         successRedirect: "/meals",
+         failureRedirect: "/login"
+}), function(req, res){
+});
+
+// LOGOUT ROUTES AND LOGIC
+app.get("/logout", function(req, res){
+    req.logout();
+    res.render("landing");
+});
+
+function isLoggedIn(req,res,next){
+    if(req.isAuthenticated()){
+        return next();
+    }
+    res.redirect("/login");
+}
 
 app.listen(PORT, function() {
   console.log("App listening on PORT: " + PORT);
