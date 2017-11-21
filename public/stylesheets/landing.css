@@ -45,19 +45,19 @@ slideshow {
 }
 .slideshow li:nth-child(2) { 
   background-image: url(https://images.pexels.com/photos/461198/pexels-photo-461198.jpeg);
-  animation-delay: 10s; 
+  animation-delay: 5s; 
 }
 .slideshow li:nth-child(3) { 
   background-image: url(https://images.pexels.com/photos/196643/pexels-photo-196643.jpeg);
-  animation-delay: 20s; 
+  animation-delay: 10s; 
 }
 .slideshow li:nth-child(4) { 
   background-image: url(https://images.pexels.com/photos/46239/salmon-dish-food-meal-46239.jpeg);
-  animation-delay: 30s; 
+  animation-delay: 15s; 
 }
 .slideshow li:nth-child(5) { 
   background-image: url(https://images.pexels.com/photos/56007/jause-eat-delicious-food-56007.jpeg);
-  animation-delay: 40s; 
+  animation-delay: 20s; 
 }
 
 @keyframes imageAnimation { 
