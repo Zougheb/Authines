@@ -2,11 +2,21 @@ var express        = require("express"),
     app            = express(),
     bodyParser     = require("body-parser"),
     mongoose       = require("mongoose"),
+    MONGODB_URI    = process.env.MONGODB_URI || "mongodb://localhost/mongoHeadlines",
+    options = {
+                  useMongoClient: true,
+                  autoIndex: false, // Don't build indexes
+                  reconnectTries: Number.MAX_VALUE, // Never stop trying to reconnect
+                  reconnectInterval: 500, // Reconnect every 500ms
+                  poolSize: 10, // Maintain up to 10 socket connections
+                  // If not connected, return errors immediately rather than waiting for reconnect
+                  bufferMaxEntries: 0
+                },
     flash          = require("connect-flash"),
     passport       = require("passport"),
     LocalStrategy  = require("passport-local"),
     methodOverride = require("method-override"),
-    Cuisine     = require ("./models/cuisine"),
+    Cuisine        = require ("./models/cuisine"),
     Comment        = require ("./models/comment"),
     User           = require("./models/user"),
     PORT           = process.env.PORT || 8081,
@@ -18,7 +28,7 @@ var commentRoutes    = require("./routes/comments"),
     indexRoutes      = require("./routes/index");
     
 mongoose.Promise = global.Promise;
-mongoose.connect("mongodb://localhost/food_world_app", {useMongoClient: true});
+mongoose.connect(MONGODB_URI, options);
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static(__dirname + "/public"));
 app.set("view engine", "ejs");
